@@ -8,7 +8,7 @@ const asyncHandler = function (reqestHandler) {
 
 
 
-export { asyncHandler };
+export default asyncHandler ;
 
 
 
