@@ -1,7 +1,6 @@
-import {v2 as cloudinary} from "cloudinary"
-import fs from "fs"
+import {v2 as cloudinary} from 'cloudinary'
+import fs from 'fs'
 
-import { v2 as cloudinary } from 'cloudinary';
 
 
     // Configuration
@@ -23,8 +22,17 @@ import { v2 as cloudinary } from 'cloudinary';
             console.log("File is uploded on cloudinary", response.url);
             return response;
         } catch (error) {
-            fs.unlinkSync(localFilePath) //remove the locally saved temporary file as the upload operation for failed
-            return null; 
+            console.error('Error uploading file to Cloudinary:', error);
+            if (fs.existsSync(localFilePath)) {
+                try {
+                    fs.unlinkSync(localFilePath);
+                    console.log('Local file deleted:', localFilePath);
+                } catch (unlinkError) {
+                    console.error('Error deleting local file:', unlinkError);
+                }
+            } else {
+                console.warn('Local file does not exist, cannot delete:', localFilePath);
+            }
         }
     }
 

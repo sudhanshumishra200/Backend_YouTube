@@ -4,11 +4,11 @@ import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2'
 
 const videoSchema = new mongoose.Schema({
     videoFile:{
-        type: String, //cloudnary
-        required: true
+        type: String, //cloudnary url
+        required: [true, 'Video is required']
     },
     thumbNail:{
-        type: String, //cloudnary
+        type: String, //cloudnary url
         required: true
     },
     title:{
@@ -25,20 +25,20 @@ const videoSchema = new mongoose.Schema({
     },
     views:{
         type: Number,
-        required: 0
+        default: 0
     },
     isPublished:{
         type: Boolean, 
-        required: true
+        default: true
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: "User"
     }
 },{
     timestamps: true
 })
 
-videoSchema.plugin(mongooseAggregatePaginate)
+videoSchema.plugin(mongooseAggregatePaginate) // it allows u to write aggrigation queries
 
 export const Video = mongoose.model('Video', videoSchema)

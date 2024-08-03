@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import jsonwebtoken from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 const userSchema = new mongoose.Schema({
@@ -22,12 +22,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
+        index: true
     },
     avatar: {
         type: String,// cloudnary url
         required: true,
     },
-    avatar: {
+    coverImage: {
         type: String,// cloudnary url
     },
     watchHistory: [
@@ -42,28 +43,29 @@ const userSchema = new mongoose.Schema({
     },
     refreshToken: {
         type: String,
-        default: null
     },
 },{
     timestamps: true,
 
 })
 
+// it is a mongoose hook  which will be executed before the password saved in the db  it will encrypt the password then save them 
 userSchema.pre("save", async function(next) {
     if(!this.isModified('password')) return next()
 
-    this.password= bcrypt.hash(this.password, 10)
+    this.password= await bcrypt.hash(this.password, 10) // we have the bcrypt library to encrypt and decrypt passwords 
     next()
 })
 
-// use for checking password is correct
+// we can make method in mongoose and we can inject methods (costom methodes method.)
 userSchema.methods.isPasswordCorrect = async function(password) {
 
-    return await bcrypt.compare(password, this.password)
+    return await bcrypt.compare(password, this.password) // bcrypt lib also can check the password
 }
 
-userSchema.methods.generateAccessToken = async function(){
-    jwt.sing({
+userSchema.methods.generateAccessToken = async function(){ // we have injected a method in the user schema which will generate the access token. access token 
+    //is short lived token and refresh token is littile long lived token
+    return await jwt.sing({ //payload
         _id: this._id,
         email: this._email,
         username: this._username,
@@ -77,6 +79,18 @@ userSchema.methods.generateAccessToken = async function(){
     }
 )
 }
-userSchema.methods.generateRefreshToken = async function(){}
+userSchema.methods.generateRefreshToken = async function(){
+    return await jwt.sing({ //payload
+        _id: this._id,
+
+    },
+
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+        expiresIn: process.env.REFRESH_TOKEN_SECRET
+    }
+)
+}
 
 export const User = mongoose.model('User', userSchema)
+// The User will be saved inside the  database as small letter
