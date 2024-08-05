@@ -65,7 +65,7 @@ userSchema.methods.isPasswordCorrect = async function(password) {
 
 userSchema.methods.generateAccessToken = async function(){ // we have injected a method in the user schema which will generate the access token. access token 
     //is short lived token and refresh token is littile long lived token
-    return await jwt.sing({ //payload
+    return jwt.sign({ //payload
         _id: this._id,
         email: this._email,
         username: this._username,
@@ -75,19 +75,19 @@ userSchema.methods.generateAccessToken = async function(){ // we have injected a
 
     process.env.ACCESS_TOKEN_SECRET,
     {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        expiresIn: process.env.ACCESS_TOKEN_EXPRIRY
     }
 )
 }
 userSchema.methods.generateRefreshToken = async function(){
-    return await jwt.sing({ //payload
+    return  jwt.sign({ //payload
         _id: this._id,
 
     },
 
     process.env.REFRESH_TOKEN_SECRET,
     {
-        expiresIn: process.env.REFRESH_TOKEN_SECRET
+        expiresIn: process.env.REFRESH_TOKEN_EXPRIRY
     }
 )
 }
