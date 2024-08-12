@@ -294,6 +294,8 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     // if they are equal we will update the password in db
     // then we will return success message
 
+    //TODO ADD DELETE IMAGE UTILL 
+
     const {currentPassword, newPassword} = req.body;
 
     const user = await User.findById(req.user?._id)
@@ -466,6 +468,11 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
            "User avatar updated successfully"
        )
    )
+})
+
+// agrigate pipline returns array
+const getUserChannelProfile = asyncHandler(async (req, res) => {
+
 })
 
 export { 
